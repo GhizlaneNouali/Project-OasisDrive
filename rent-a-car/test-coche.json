@@ -1,0 +1,10 @@
+{
+  "marca": "Toyota",
+  "modelo": "Corolla-Upload",
+  "matricula": "UPLOAD123",
+  "anio": 2021,
+  "kilometros": 1000,
+  "precio_dia": 50.0,
+  "color": "Azul",
+  "imagen_url": "http://localhost:8080/uploads/1779202226269-upload-test.jpg"
+}
