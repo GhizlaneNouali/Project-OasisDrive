@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Input from "../../componentes/formulario/Input";
-import { Shield, ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import { cambiarPassword } from "../../servicios/authServicio";
+import { obtenerUsuario } from "../../servicios/authServicio";
 
 function CambiarPassword() {
   const navigate = useNavigate();
@@ -38,12 +40,17 @@ function CambiarPassword() {
 
     try {
       setLoading(true);
-
-      await new Promise((r) => setTimeout(r, 800));
-
+      // Obtener usuario logueado
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      if (!usuario) {
+        setError("No hay usuario logueado");
+        return;
+      }
+      await cambiarPassword(usuario.id, form.actual, form.nueva);
       setOk(true);
-
       setTimeout(() => navigate("/perfil"), 1200);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }

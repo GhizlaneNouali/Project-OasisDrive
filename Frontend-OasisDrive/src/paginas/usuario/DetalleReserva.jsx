@@ -25,6 +25,7 @@ function DetalleReserva() {
   const [reserva, setReserva] = useState(null);
   const [loading, setLoading] = useState(true);
   const [autoFinalized, setAutoFinalized] = useState(false);
+  const usuarioLogueado = JSON.parse(localStorage.getItem("usuario")) || null;
 
   const { notificacion, mostrarNotificacion, cerrarNotificacion } =
     useNotificacion();
@@ -40,13 +41,16 @@ function DetalleReserva() {
           const ahora = new Date();
 
           if (ahora >= fechaFin && !autoFinalized) {
-            try {
-              await finalizarReserva(id);
-              data.estado = "FINALIZADA";
-              setReserva(data);
-              setAutoFinalized(true);
-              mostrarNotificacion("Reserva finalizada automáticamente", "success");
-            } catch {}
+            // Solo el admin puede finalizar reservas desde el frontend
+            if (usuarioLogueado && usuarioLogueado.rol === "ADMIN") {
+              try {
+                await finalizarReserva(id);
+                data.estado = "FINALIZADA";
+                setReserva(data);
+                setAutoFinalized(true);
+                mostrarNotificacion("Reserva finalizada automáticamente", "success");
+              } catch {}
+            }
           }
         }
       } catch {
@@ -58,6 +62,12 @@ function DetalleReserva() {
   }, [id]);
 
   const finalizar = async () => {
+    // Comprobar rol en frontend para evitar mostrar botón a clientes
+    if (!usuarioLogueado || usuarioLogueado.rol !== "ADMIN") {
+      mostrarNotificacion("Acceso denegado: solo administradores pueden finalizar reservas", "error");
+      return;
+    }
+
     try {
       await finalizarReserva(id);
       setReserva({ ...reserva, estado: "FINALIZADA" });
@@ -227,7 +237,7 @@ function DetalleReserva() {
             {/* ACTIONS */}
             <div className="space-y-3">
 
-              {reserva.estado === "CONFIRMADA" && (
+              {reserva.estado === "CONFIRMADA" && usuarioLogueado && usuarioLogueado.rol === "ADMIN" && (
                 <button
                   onClick={finalizar}
                   className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 font-bold hover:scale-[1.02] transition"

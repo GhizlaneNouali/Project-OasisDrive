@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -136,9 +137,16 @@ public class ReservaController {
      * Finalizar una reserva (cambiar estado a FINALIZADA)
      */
     @PutMapping("/{id}/finalizar")
-    public ResponseEntity<Map<String, Object>> finalizarReserva(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Object>> finalizarReserva(@PathVariable Integer id,
+            @RequestHeader(value = "X-User-Role", required = false) String userRole) {
         Map<String, Object> respuesta = new HashMap<>();
         
+        // Comprobar rol: solo ADMIN puede finalizar reservas
+        if (userRole == null || !userRole.equalsIgnoreCase("ADMIN")) {
+            respuesta.put("error", "Acceso denegado: se requiere rol ADMIN para finalizar reservas");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(respuesta);
+        }
+
         try {
             Reserva reserva = reservaService.finalizarReserva(id);
             respuesta.put("mensaje", "Reserva finalizada exitosamente");

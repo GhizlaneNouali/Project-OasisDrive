@@ -74,33 +74,27 @@ export const actualizarUsuario = async (id, datos) => {
 
 // CAMBIAR PASSWORD
 
-export const cambiarPassword = async (
-    id,
-    nuevaPassword
-) => {
-
-    const usuario = await obtenerUsuario(id)
-
+export const cambiarPassword = async (id, passwordActual, passwordNueva) => {
     const response = await fetch(
-        `${API_URL}/usuarios/${id}`,
+        `${API_URL}/usuarios/${id}/cambiar-password`,
         {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                ...usuario,
-                password: nuevaPassword
+                passwordActual,
+                passwordNueva
             })
         }
-    )
+    );
 
+    const data = await response.json();
     if (!response.ok) {
-        throw new Error('Error al cambiar contraseña')
+        throw new Error(data.error || 'Error al cambiar contraseña');
     }
-
-    return response.json()
-}
+    return data;
+};
 
 // LOGOUT
 
