@@ -99,7 +99,7 @@ public class CocheController {
 
     /**
      * Obtener vehículos por rango de precio
-     * Parámetros: /api/coches/precio?min=10&max=50
+     * Parámetros: /api/coches/precio?min=10&amp;max=50
      */
     @GetMapping("/precio")
     public ResponseEntity<List<Coche>> obtenerCochesPorPrecio(
