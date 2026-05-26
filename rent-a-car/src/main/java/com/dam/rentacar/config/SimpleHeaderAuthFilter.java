@@ -25,6 +25,12 @@ public class SimpleHeaderAuthFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Rutas públicas: consultar valoraciones de un coche y su promedio
+        if (HttpMethod.GET.matches(method) && path.startsWith("/api/valoraciones/coche")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Para cualquier otra ruta bajo /api/ requerimos headers X-User-Id y X-User-Role
         if (path.startsWith("/api/")) {
             String userId = request.getHeader("X-User-Id");
