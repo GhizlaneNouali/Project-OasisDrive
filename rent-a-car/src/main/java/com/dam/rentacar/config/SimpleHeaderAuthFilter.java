@@ -13,32 +13,38 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SimpleHeaderAuthFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        // Rutas públicas: listar coches y ver detalle
-        if (HttpMethod.GET.matches(method) && path.startsWith("/api/coches")) {
+        // Rutas públicas
+        if (path.equals("/api/usuarios/login") ||
+                path.equals("/api/usuarios/registro") ||
+                (HttpMethod.GET.matches(method) && path.startsWith("/api/coches"))) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Rutas públicas: consultar valoraciones de un coche y su promedio
-        if (HttpMethod.GET.matches(method) && path.startsWith("/api/valoraciones/coche")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Para cualquier otra ruta bajo /api/ requerimos headers X-User-Id y X-User-Role
+        // Rutas protegidas
         if (path.startsWith("/api/")) {
+
             String userId = request.getHeader("X-User-Id");
             String userRole = request.getHeader("X-User-Role");
-            if (userId == null || userId.isEmpty() || userRole == null || userRole.isEmpty()) {
+
+            if (userId == null || userId.isEmpty()
+                    || userRole == null || userRole.isEmpty()) {
+
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"error\":\"Unauthorized: missing authentication headers\"}");
+
+                response.getWriter().write("""
+                            {"error":"Unauthorized: missing authentication headers"}
+                        """);
+
                 return;
             }
         }
