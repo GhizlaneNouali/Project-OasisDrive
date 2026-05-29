@@ -60,7 +60,7 @@ export const finalizarReserva = async (id) => {
 }
 
 export const obtenerTodasReservas = async () => {
-    const response = await fetch(`${API_URL}/reservas`)
+    const response = await fetch(`${API_URL}/reservas`, { headers: authHeaders() })
     if (!response.ok) throw new Error('No se pudieron obtener las reservas')
     return response.json()
 }
