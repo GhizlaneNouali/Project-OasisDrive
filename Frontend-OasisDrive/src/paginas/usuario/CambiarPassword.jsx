@@ -34,8 +34,8 @@ function CambiarPassword() {
       return setError("Las contraseñas no coinciden");
     }
 
-    if (form.nueva.length < 6) {
-      return setError("La contraseña debe tener al menos 6 caracteres");
+    if (form.nueva.length < 8) {
+      return setError("La contraseña debe tener al menos 8 caracteres");
     }
 
     try {
@@ -98,7 +98,8 @@ function CambiarPassword() {
               type="password"
               value={form.nueva}
               onChange={handle}
-              placeholder="Nueva contraseña"
+              placeholder="Nueva contraseña (mín. 8 caracteres)"
+              minLength={8}
             />
 
             <Input

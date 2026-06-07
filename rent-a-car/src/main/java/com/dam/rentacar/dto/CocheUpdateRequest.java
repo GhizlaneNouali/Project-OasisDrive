@@ -1,5 +1,8 @@
 package com.dam.rentacar.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CocheUpdateRequest {
     private String marca;
     private String modelo;

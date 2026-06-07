@@ -6,7 +6,8 @@ function Input({
     required = false,
     disabled = false,
     className = "",
-    name = ""
+    name = "",
+    minLength
 }) {
     return (
         <input
@@ -17,6 +18,7 @@ function Input({
             required={required}
             disabled={disabled}
             name={name}
+            minLength={minLength}
             className={`
                 w-full px-4 py-3 rounded-2xl
                 bg-white/5 border border-white/10

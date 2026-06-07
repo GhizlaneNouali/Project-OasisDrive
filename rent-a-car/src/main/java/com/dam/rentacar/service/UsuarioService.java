@@ -13,6 +13,8 @@ import com.dam.rentacar.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
+
+    private static final int PASSWORD_MIN_LENGTH = 8;
     
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -62,6 +64,7 @@ public class UsuarioService {
         if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
             throw new IllegalArgumentException("La contraseña es obligatoria");
         }
+        validarLongitudPassword(usuario.getPassword());
         
         // Validar que no exista otro usuario con el mismo email
         if (obtenerUsuarioPorEmail(usuario.getEmail()).isPresent()) {
@@ -141,6 +144,7 @@ public class UsuarioService {
         if (passwordNueva == null || passwordNueva.isEmpty()) {
             throw new IllegalArgumentException("La nueva contraseña no puede estar vacía");
         }
+        validarLongitudPassword(passwordNueva);
         
         usuario.setPassword(passwordNueva);
         return usuarioRepository.save(usuario);
@@ -156,6 +160,13 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
     
+    private void validarLongitudPassword(String password) {
+        if (password.length() < PASSWORD_MIN_LENGTH) {
+            throw new IllegalArgumentException(
+                    "La contraseña debe tener al menos " + PASSWORD_MIN_LENGTH + " caracteres");
+        }
+    }
+
     /**
      * Validar que el usuario tenga al menos 18 años
      */

@@ -171,8 +171,7 @@ public class ReservaService {
      */
     private long calcularDias(Date inicio, Date fin) {
         long millisecondosPorDia = 24 * 60 * 60 * 1000;
-        long dias = (fin.getTime() - inicio.getTime()) / millisecondosPorDia;
-        return dias + 1; // Incluir el día de inicio
+        return (fin.getTime() - inicio.getTime()) / millisecondosPorDia;
     }
     
     /**

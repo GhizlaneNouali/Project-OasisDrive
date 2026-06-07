@@ -39,6 +39,11 @@ function Registro() {
       return;
     }
 
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres");
+      return;
+    }
+
     // 🔹 validación edad
     const edad = calcularEdad(fechaNacimiento);
 
@@ -134,9 +139,10 @@ function Registro() {
 
           <Input
             type="password"
-            placeholder="Contraseña"
+            placeholder="Contraseña (mín. 8 caracteres)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            minLength={8}
           />
 
           {error && (

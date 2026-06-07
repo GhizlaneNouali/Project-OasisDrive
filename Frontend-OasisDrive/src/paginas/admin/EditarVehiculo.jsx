@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
+  buildVehiculoPayload,
   obtenerVehiculo,
   actualizarVehiculo,
   subirImagenVehiculo
 } from "../../servicios/vehiculoServicio";
+import { obtenerSrcImagen } from "../../servicios/imagenServicio";
 
 import Input from "../../componentes/formulario/Input";
 import Toast from "../../componentes/notificaciones/Toast";
@@ -18,6 +20,7 @@ function EditarVehiculo() {
   const [form, setForm] = useState({});
   const [img, setImg] = useState(null);
   const [preview, setPreview] = useState("");
+  const [imagenOriginal, setImagenOriginal] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -34,13 +37,14 @@ function EditarVehiculo() {
           marca: v.marca || "",
           modelo: v.modelo || "",
           matricula: v.matricula || "",
-          anio: v.anio || "",
+          anio: v.anio ?? "",
           color: v.color || "",
-          precio: v.precio_dia || "",
-          kilometros: v.kilometros || ""
+          precio: v.precio_dia ?? "",
+          kilometros: v.kilometros ?? ""
         });
 
-        setPreview(v.imagen_url || "");
+        setImagenOriginal(v.imagen_url || "");
+        setPreview(obtenerSrcImagen(v.imagen_url));
       } catch (err) {
         setError("Error al cargar el vehículo");
         mostrarNotificacion(err.message, "error");
@@ -69,22 +73,27 @@ function EditarVehiculo() {
     e.preventDefault();
     setError("");
 
+    const camposVacios = Object.values(form).some((v) => v === "" || v === null || v === undefined);
+    if (camposVacios) {
+      setError("Completa todos los campos");
+      return;
+    }
+
+    if (!img && !imagenOriginal) {
+      setError("Debes subir una imagen del vehículo");
+      return;
+    }
+
     try {
       setSaving(true);
 
-      let imgUrl = preview;
+      let imgUrl = imagenOriginal;
 
       if (img) {
         imgUrl = await subirImagenVehiculo(img);
       }
 
-      await actualizarVehiculo(id, {
-        ...form,
-        anio: Number(form.anio),
-        kilometros: Number(form.kilometros),
-        precio_dia: Number(form.precio),
-        imagen_url: imgUrl
-      });
+      await actualizarVehiculo(id, buildVehiculoPayload(form, imgUrl));
 
       mostrarNotificacion("Vehículo actualizado correctamente", "success");
       setTimeout(() => navigate("/admin/vehiculos"), 700);

@@ -59,7 +59,7 @@ public class ReservaServiceTest {
         Reserva r = reservaService.crearReserva(1, 1, inicio, fin);
 
         assertEquals(Estado.CONFIRMADA, r.getEstado());
-        assertEquals(50f * 3, r.getPrecio_total());
+        assertEquals(50f * 2, r.getPrecio_total());
         verify(reservaRepository).save(r);
     }
 

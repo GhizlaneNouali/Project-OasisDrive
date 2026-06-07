@@ -35,14 +35,14 @@ public class UsuarioServiceTest {
     void cambiarPassword_exitoso() {
         Usuario u = new Usuario();
         u.setId(1);
-        u.setPassword("oldpass");
+        u.setPassword("oldpass12");
 
         when(usuarioRepository.findById(1)).thenReturn(Optional.of(u));
         when(usuarioRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        Usuario res = usuarioService.cambiarPassword(1, "oldpass", "newpass");
+        Usuario res = usuarioService.cambiarPassword(1, "oldpass12", "newpass12");
 
-        assertEquals("newpass", res.getPassword());
+        assertEquals("newpass12", res.getPassword());
         verify(usuarioRepository).save(res);
     }
 

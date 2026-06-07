@@ -1,5 +1,25 @@
 const API_URL = '/api'
 
+const authHeaders = (json = true) => {
+  const usuario = JSON.parse(localStorage.getItem('usuario')) || null
+  const headers = {}
+  if (json) headers['Content-Type'] = 'application/json'
+  if (usuario?.rol) headers['X-User-Role'] = usuario.rol
+  if (usuario?.id) headers['X-User-Id'] = usuario.id
+  return headers
+}
+
+export const buildVehiculoPayload = (form, imagen_url) => ({
+  marca: form.marca?.trim(),
+  modelo: form.modelo?.trim(),
+  matricula: form.matricula?.trim(),
+  anio: Number(form.anio),
+  color: form.color?.trim(),
+  kilometros: Number(form.kilometros),
+  precio_dia: Number(form.precio),
+  imagen_url,
+})
+
 // OBTENER TODOS LOS COCHES
 
 export const obtenerVehiculos = async () => {
@@ -53,9 +73,7 @@ export const obtenerVehiculosPrecio = async (min, max) => {
 export const crearVehiculo = async (vehiculo) => {
   const response = await fetch(`${API_URL}/coches`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: authHeaders(),
     body: JSON.stringify(vehiculo)
   })
 
@@ -76,9 +94,7 @@ export const crearVehiculo = async (vehiculo) => {
 export const actualizarVehiculo = async (id, vehiculo) => {
   const response = await fetch(`${API_URL}/coches/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: authHeaders(),
     body: JSON.stringify(vehiculo)
   })
 
@@ -101,7 +117,8 @@ export const eliminarVehiculo = async (id) => {
     const response = await fetch(
         `${API_URL}/coches/${id}`,
         {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: authHeaders()
         }
     )
 
@@ -122,7 +139,8 @@ export const eliminarVehiculo = async (id) => {
 
   export const activarVehiculo = async (id) => {
     const response = await fetch(`${API_URL}/coches/${id}/activar`, {
-      method: 'PUT'
+      method: 'PUT',
+      headers: authHeaders()
     })
 
     if (!response.ok) {
@@ -146,6 +164,7 @@ export const subirImagenVehiculo = async (file) => {
 
   const response = await fetch(`${API_URL}/coches/upload`, {
     method: 'POST',
+    headers: authHeaders(false),
     body: formData
   })
 

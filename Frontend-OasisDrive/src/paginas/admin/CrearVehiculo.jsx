@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Input from "../../componentes/formulario/Input";
 import {
+  buildVehiculoPayload,
   crearVehiculo,
   subirImagenVehiculo,
 } from "../../servicios/vehiculoServicio";
@@ -60,13 +61,7 @@ function CrearVehiculo() {
 
       const imagen_url = await subirImagenVehiculo(imagen);
 
-      await crearVehiculo({
-        ...form,
-        anio: Number(form.anio),
-        kilometros: Number(form.kilometros),
-        precio_dia: Number(form.precio),
-        imagen_url,
-      });
+      await crearVehiculo(buildVehiculoPayload(form, imagen_url));
 
       mostrarNotificacion("Vehículo creado correctamente", "success");
       setTimeout(() => navigate("/admin/vehiculos"), 700);
